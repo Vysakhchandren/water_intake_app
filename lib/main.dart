@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:water_intake_app/provider/water_data.dart';
 import 'package:provider/provider.dart';
-import 'home_page.dart';
+import 'pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
       create: (context) => WaterData(),
 
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Water Intake',
         theme: ThemeData(
-
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green ),
         ),
         home: const HomePage(),
