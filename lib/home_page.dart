@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:water_intake_app/components/water_tile.dart';
 import 'package:water_intake_app/model/water_mode.dart';
 import 'package:water_intake_app/provider/water_data.dart';
 
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
               //save to db
               saveWater();
               Navigator.of(context).pop();
+              amountController.clear();
             },
             child: Text('Save'),
           ),
@@ -92,9 +94,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: ListView.builder(itemCount: value.waterDataList.length,itemBuilder: (context, index){
           final waterModel = value.waterDataList[index];
-          return ListTile(title: Text(waterModel.amount.toString()),
-          subtitle: Text(waterModel.id.toString(),style: const TextStyle(color: Colors.black),),
-          );
+          return WaterTile(waterModel: waterModel);
 
         }),
         backgroundColor: Colors.grey,
