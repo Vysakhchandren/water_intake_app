@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:water_intake_app/model/water_mode.dart';
 
+import '../utils/date_helper.dart';
+
 class WaterData extends ChangeNotifier {
   List<WaterModel> waterDataList = [];
 
@@ -34,7 +36,7 @@ class WaterData extends ChangeNotifier {
           unit: 'ml',
         ),
       );
-    }else{
+    } else {
       print('Error: ${response.statusCode}');
     }
     notifyListeners();
@@ -66,12 +68,75 @@ class WaterData extends ChangeNotifier {
     return waterDataList;
   }
 
+  String getWeekday(DateTime dateTime) {
+    switch (dateTime.weekday) {
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return '';
+    }
+  }
+
+  DateTime getStartOfWeek() {
+    DateTime? startOfWeek;
+    DateTime dateTime = DateTime.now();
+
+    for (int i = 0; i < 7; i++) {
+      if (getWeekday(dateTime.subtract(Duration(days: i))) == 'Sunday') {
+        startOfWeek = dateTime.subtract(Duration(days: i));
+      }
+    }
+    return startOfWeek!;
+  }
+
   void delete(WaterModel waterModel) {
-    final url = Uri.https("water-intaker-597a0-default-rtdb.firebaseio.com",
-        "water/${waterModel.id}.json",);
+    final url = Uri.https(
+      "water-intaker-597a0-default-rtdb.firebaseio.com",
+      "water/${waterModel.id}.json",
+    );
     http.delete(url);
     //remove item from the list
     waterDataList.removeWhere((element) => element.id == waterModel.id!);
     notifyListeners();
+  }
+
+  String calculateTotalWaterIntake(WaterData value) {
+    double weeklyWaterIntake = 0;
+
+    for (var water in value.waterDataList) {
+      weeklyWaterIntake += double.parse(water.amount.toString());
+    }
+    return weeklyWaterIntake.toStringAsFixed(2);
+  }
+
+  // calculate the daily water intake
+  Map<String, double> calculateDailyWaterSummery() {
+    Map<String, double> dailyWaterSummery = {};
+
+    //loop through the water data list
+    for (var water in waterDataList) {
+      String date = convertDateTimeToString(water.dateTime);
+      double amount = double.parse(water.toString());
+      if (dailyWaterSummery.containsKey(date)) {
+        double currentAmount = dailyWaterSummery[date]!;
+        currentAmount += amount;
+        dailyWaterSummery[date] = currentAmount;
+        } else {
+        dailyWaterSummery.addAll({date : amount});
+      }
+    }
+    return dailyWaterSummery;
   }
 }

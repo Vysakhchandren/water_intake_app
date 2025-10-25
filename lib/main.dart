@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         title: 'Water Intake',
         theme: ThemeData(
 
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange ),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green ),
         ),
         home: const HomePage(),
       ),
